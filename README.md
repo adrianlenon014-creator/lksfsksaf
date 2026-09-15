@@ -32,6 +32,8 @@ For Netlify, use `npm run build:client` as the build command and `dist` as the p
 
 Never commit `.env` or any real payment credentials. `.env.example` is safe to commit.
 
+The npm lockfile is committed and should be installed with `npm ci` in CI environments such as Netlify.
+
 ## Production
 
 Render should use:
