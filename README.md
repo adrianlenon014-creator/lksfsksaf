@@ -28,6 +28,8 @@ For a separately deployed frontend, set `VITE_API_URL` to the Render API URL:
 VITE_API_URL=https://lksfsksaf.onrender.com
 ```
 
+For Netlify, use `npm run build:client` as the build command and `dist` as the publish directory. `netlify.toml` contains these settings and the SPA fallback automatically.
+
 Never commit `.env` or any real payment credentials. `.env.example` is safe to commit.
 
 ## Production
