@@ -22,6 +22,12 @@ APP_URL=http://localhost:3000
 WHOPS_API_KEY=your_server_side_key
 ```
 
+For a separately deployed frontend, set `VITE_API_URL` to the Render API URL:
+
+```bash
+VITE_API_URL=https://lksfsksaf.onrender.com
+```
+
 Never commit `.env` or any real payment credentials. `.env.example` is safe to commit.
 
 ## Production

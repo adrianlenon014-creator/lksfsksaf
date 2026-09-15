@@ -18,6 +18,8 @@ interface CartSidebarProps {
 
 type CheckoutState = 'idle' | 'processing' | 'success';
 
+const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://lksfsksaf.onrender.com';
+
 export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemoveItem, onClearCart }: CartSidebarProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -49,7 +51,7 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
 
     try {
       // The server must create the payment session before any purchase is recorded.
-      const response = await fetch('/api/checkout', {
+      const response = await fetch(`${apiBaseUrl}/api/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, email: user.email })
