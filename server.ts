@@ -57,7 +57,7 @@ async function startServer() {
         plan: {
           initial_price: total,
           plan_type: 'one_time',
-          title: items.length === 1 ? items[0].title : `Emtech Developers order (${items.length} items)`,
+          title: items.length === 1 ? items[0].title : `StartUP IT order (${items.length} items)`,
           currency: 'usd',
         },
         redirect_url: returnUrl,

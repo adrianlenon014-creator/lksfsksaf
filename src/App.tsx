@@ -63,11 +63,11 @@ export default function App() {
         <footer className="border-t border-white/5 py-12 px-6 mt-auto">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3 text-zinc-400">
-              <img src="/images.jpg" alt="Emtech Developers Logo" className="w-8 h-8 object-contain rounded-lg bg-white" />
-              <span className="font-semibold text-white">Emtech Developers.</span>
+              <img src="/images.jpg" alt="StartUP IT Logo" className="w-8 h-8 object-contain rounded-lg bg-white" />
+              <span className="font-semibold text-white">StartUP IT</span>
             </div>
             <p className="text-sm text-zinc-500">
-              &copy; {new Date().getFullYear()} Emtech Developers. Premium digital goods for developers.
+              &copy; {new Date().getFullYear()} StartUP IT. Premium digital goods for developers.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-zinc-500">
               <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>

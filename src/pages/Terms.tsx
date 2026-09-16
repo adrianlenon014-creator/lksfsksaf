@@ -15,7 +15,7 @@ export function Terms() {
         <div className="space-y-12 text-zinc-400 leading-relaxed">
           <section>
             <h2 className="text-2xl font-semibold text-white mb-4">1. Acceptance of Terms</h2>
-            <p>By accessing and purchasing premium digital goods from Emtech Developers, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our platform or services.</p>
+            <p>By accessing and purchasing premium digital goods from StartUP IT, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our platform or services.</p>
           </section>
           
           <section>
@@ -30,7 +30,7 @@ export function Terms() {
           
           <section>
             <h2 className="text-2xl font-semibold text-white mb-4">4. Intellectual Property</h2>
-            <p>All content, including text, graphics, branding, and course architecture, is the exclusive property of Emtech Developers and is protected by international copyright laws. Unauthorized reproduction is strictly prohibited.</p>
+            <p>All content, including text, graphics, branding, and course architecture, is the exclusive property of StartUP IT and is protected by international copyright laws. Unauthorized reproduction is strictly prohibited.</p>
           </section>
           
           <section>

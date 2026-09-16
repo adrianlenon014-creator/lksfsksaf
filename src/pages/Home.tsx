@@ -31,13 +31,13 @@ export function Home({ searchQuery, onAddToCart }: HomeProps) {
               Instant Digital Delivery
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.1] mb-6 sm:mb-8">
-              Master your craft. <br className="hidden md:block" />
+              StartUP IT. <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-200 to-zinc-600">
-                Build the future.
+                Build smarter.
               </span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto px-2">
-              Premium digital courses and architecture blueprints for elite developers. 
+              Premium digital courses and architecture blueprints for modern tech teams and ambitious founders.
               Buy once, own forever. Learn at your own pace.
             </p>
           </motion.div>

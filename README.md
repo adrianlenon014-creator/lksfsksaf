@@ -1,4 +1,4 @@
-# Emtech Developers
+# StartUP IT
 
 Premium digital courses for developers, built with React, Vite, Express, and Firebase.
 

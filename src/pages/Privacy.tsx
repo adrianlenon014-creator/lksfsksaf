@@ -15,7 +15,7 @@ export function Privacy() {
         <div className="space-y-12 text-zinc-400 leading-relaxed">
           <section>
             <h2 className="text-2xl font-semibold text-white mb-4">1. Information We Collect</h2>
-            <p>When you purchase a course from Emtech Developers, we collect the email address you provide for delivery purposes. If you choose to authenticate via Google, we collect basic profile information such as your name and email address as securely provided by the Google identity service.</p>
+            <p>When you purchase a course from StartUP IT, we collect the email address you provide for delivery purposes. If you choose to authenticate via Google, we collect basic profile information such as your name and email address as securely provided by the Google identity service.</p>
           </section>
           
           <section>

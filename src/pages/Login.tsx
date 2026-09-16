@@ -31,7 +31,7 @@ export function Login() {
             <Code2 size={32} className="text-black" />
           </div>
           
-          <h1 className="text-2xl font-bold text-white mb-2">Welcome to Emtech Developers</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Welcome to StartUP IT</h1>
           <p className="text-zinc-400 mb-8">Sign in to access your digital courses and architecture blueprints.</p>
           
           <button
