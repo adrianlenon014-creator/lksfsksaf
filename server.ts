@@ -15,6 +15,10 @@ async function startServer() {
   app.use(express.json());
   app.use(cors());
 
+  app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   // Payment API Endpoint for Whops.com
   app.post("/api/checkout", async (req, res) => {
     try {
@@ -99,6 +103,10 @@ async function startServer() {
       console.error("Whops API Error:", error);
       res.status(500).json({ error: error.message });
     }
+  });
+
+  app.use('/api', (_req, res) => {
+    res.status(404).json({ error: 'API route not found.' });
   });
 
   // Vite middleware for development
