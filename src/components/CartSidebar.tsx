@@ -33,13 +33,27 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
     setCheckoutState('processing');
 
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const apiUrl = (import.meta.env.VITE_API_URL || 'https://lksfsksaffff.onrender.com').replace(/\/$/, '');
       const response = await fetch(`${apiUrl}/api/checkout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, email: email.trim() }),
       });
-      const result = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const responseText = await response.text();
+      let result: { url?: string; error?: string } = {};
+
+      if (contentType.includes('application/json')) {
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(`The checkout API returned invalid JSON (HTTP ${response.status}).`);
+        }
+      } else {
+        throw new Error(
+          `The checkout API returned HTML instead of JSON (HTTP ${response.status}). Check that VITE_API_URL points to the Express API.`
+        );
+      }
 
       if (!response.ok || !result.url) {
         throw new Error(result.error || 'Unable to start checkout.');
