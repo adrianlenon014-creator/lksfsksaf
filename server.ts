@@ -86,6 +86,10 @@ async function startServer() {
         } catch {
           // Keep provider HTML or non-JSON responses out of the client response.
         }
+
+        if (response.status === 401 || response.status === 403) {
+          message = "Whop rejected the API key. Use an account API key for this Whop account with checkout_configuration:create permission, then redeploy Render.";
+        }
         return res.status(502).json({ error: message });
       }
 

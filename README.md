@@ -35,6 +35,8 @@ Never commit `.env` or any real payment credentials. `.env.example` is safe to c
 
 The npm lockfile is committed and should be installed with `npm ci` in CI environments such as Netlify.
 
+Checkout requires an account-scoped Whop API key with the `checkout_configuration:create` permission. The `WHOP_ACCOUNT_ID` must be the `biz_...` account that owns that key; an app key, revoked key, or key from a different account returns an authorization error.
+
 ## Production
 
 Render should use:
