@@ -13,6 +13,7 @@ interface CartSidebarProps {
 }
 
 type CheckoutState = 'idle' | 'processing' | 'success';
+const defaultApiUrl = 'https://lksfsksaffff.onrender.com';
 
 export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemoveItem, onClearCart }: CartSidebarProps) {
   const [email, setEmail] = useState('');
@@ -33,14 +34,30 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
     setCheckoutState('processing');
 
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL || 'https://lksfsksaffff.onrender.com').replace(/\/$/, '');
-      const response = await fetch(`${apiUrl}/api/checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items, email: email.trim() }),
-      });
-      const contentType = response.headers.get('content-type') || '';
-      const responseText = await response.text();
+      const configuredApiUrl = (import.meta.env.VITE_API_URL || defaultApiUrl).replace(/\/$/, '');
+      const apiUrls = configuredApiUrl === defaultApiUrl ? [configuredApiUrl] : [configuredApiUrl, defaultApiUrl];
+      let response: Response | undefined;
+      let contentType = '';
+      let responseText = '';
+
+      for (const apiUrl of apiUrls) {
+        response = await fetch(`${apiUrl}/api/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items, email: email.trim() }),
+        });
+        contentType = response.headers.get('content-type') || '';
+        responseText = await response.text();
+
+        if (contentType.includes('application/json') || response.status !== 404) {
+          break;
+        }
+      }
+
+      if (!response) {
+        throw new Error('The checkout API did not respond.');
+      }
+
       let result: { url?: string; error?: string } = {};
 
       if (contentType.includes('application/json')) {
