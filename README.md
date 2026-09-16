@@ -20,6 +20,7 @@ Copy `.env.example` to `.env` and configure the server-side values before enabli
 ```bash
 APP_URL=http://localhost:3000
 WHOP_API_KEY=your_server_side_key
+WHOP_ACCOUNT_ID=biz_your_account_id
 ```
 
 For a separately deployed frontend, set `VITE_API_URL` to the Render API URL:
@@ -40,6 +41,6 @@ Render should use:
 
 - Build command: `npm install && npm run build`
 - Start command: `npm start`
-- Environment: `NODE_ENV=production`, `WHOP_API_KEY`, and `APP_URL`
+- Environment: `NODE_ENV=production`, `WHOP_API_KEY`, `WHOP_ACCOUNT_ID`, and `APP_URL`
 
 The server binds to Render's `PORT` value and serves both the API and the built single-page application.

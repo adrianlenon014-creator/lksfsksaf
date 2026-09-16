@@ -10,6 +10,7 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
   const whopApiKey = process.env.WHOP_API_KEY || process.env.WHOPS_API_KEY;
+  const whopAccountId = process.env.WHOP_ACCOUNT_ID;
 
   app.use(express.json());
   app.use(cors());
@@ -21,6 +22,12 @@ async function startServer() {
       if (!whopApiKey) {
         return res.status(400).json({ 
           error: "Payment processing is not configured. Add WHOP_API_KEY to the Render environment and redeploy." 
+        });
+      }
+
+      if (!whopAccountId) {
+        return res.status(400).json({
+          error: "Payment processing needs WHOP_ACCOUNT_ID. Add your biz_ account ID to Render and redeploy."
         });
       }
 
@@ -41,25 +48,30 @@ async function startServer() {
         return res.status(400).json({ error: "One or more checkout items are invalid." });
       }
 
-      // Prepare payload for Whop checkout API
+      const total = items.reduce((sum: number, item: any) => sum + item.price * (item.quantity || 1), 0);
+      const returnUrl = `${process.env.APP_URL || req.headers.origin || 'http://localhost:3000'}/dashboard?payment=success`;
+
+      // Whop checkout configurations use an inline one-time plan for this cart.
       const whopPayload = {
-        line_items: items.map((item: any) => ({
-          name: item.title,
-          price: Math.round(item.price * 100),
-          quantity: item.quantity || 1,
-        })),
-        customer_email: email,
-        success_url: `${req.headers.origin || 'http://localhost:3000'}/dashboard?payment=success`,
-        cancel_url: `${req.headers.origin || 'http://localhost:3000'}/?payment=canceled`
+        account_id: whopAccountId,
+        plan: {
+          initial_price: total,
+          plan_type: 'one_time',
+          title: items.length === 1 ? items[0].title : `Emtech Developers order (${items.length} items)`,
+          currency: 'usd',
+        },
+        redirect_url: returnUrl,
+        metadata: {
+          customer_email: email,
+        },
       };
 
-      // Simulated integration since Whop doesn't have a direct matching Node.js SDK
-      // In a real environment, you'd fetch('https://api.whop.com/v2/checkout/sessions', ...)
-      const response = await fetch('https://api.whop.com/v2/checkout/sessions', {
+      const response = await fetch('https://api.whop.com/api/v1/checkout_configurations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${whopApiKey}`
+          'Authorization': `Bearer ${whopApiKey}`,
+          'Api-Version-Date': '2026-09-15',
         },
         body: JSON.stringify(whopPayload)
       });
@@ -67,11 +79,18 @@ async function startServer() {
       if (!response.ok) {
         const providerError = await response.text();
         console.error('Whop API response not OK:', providerError);
-        return res.status(502).json({ error: "The payment provider could not create a checkout session." });
+        let message = "The payment provider could not create a checkout session.";
+        try {
+          const parsedError = JSON.parse(providerError);
+          message = parsedError.error?.message || message;
+        } catch {
+          // Keep provider HTML or non-JSON responses out of the client response.
+        }
+        return res.status(502).json({ error: message });
       }
 
       const session = await response.json();
-      res.json({ url: session.url });
+      res.json({ url: session.purchase_url });
     } catch (error: any) {
       console.error("Whops API Error:", error);
       res.status(500).json({ error: error.message });
