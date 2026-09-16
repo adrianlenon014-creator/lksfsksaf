@@ -8,4 +8,4 @@ services:
       - key: NODE_ENV
         value: production
       - key: VITE_API_URL
-        value: https://lksfsksaff.onrender.com
+        value: https://lksfsksafff.onrender.com
