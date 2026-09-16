@@ -18,6 +18,7 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
   const [email, setEmail] = useState('');
   const [checkoutState, setCheckoutState] = useState<CheckoutState>('idle');
   const [emailError, setEmailError] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -28,22 +29,34 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
     }
 
     setEmailError(false);
+    setCheckoutError('');
     setCheckoutState('processing');
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    try {
+      const apiUrl = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+      const response = await fetch(`${apiUrl}/api/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items, email: email.trim() }),
+      });
+      const result = await response.json();
 
-    setCheckoutState('success');
-    onClearCart();
+      if (!response.ok || !result.url) {
+        throw new Error(result.error || 'Unable to start checkout.');
+      }
 
-    const destination = items[0]?.pdfUrl || '/';
-    if (destination && destination !== '/') {
-      window.location.href = destination;
+      onClearCart();
+      window.location.href = result.url;
+    } catch (error) {
+      setCheckoutState('idle');
+      setCheckoutError(error instanceof Error ? error.message : 'Unable to start checkout.');
     }
   };
 
   const resetAndClose = () => {
     setCheckoutState('idle');
     setEmail('');
+    setCheckoutError('');
     onClose();
   };
 
@@ -154,6 +167,9 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
                         />
                         {emailError && (
                           <p className="mt-2 text-sm text-red-600">Please enter a valid email address.</p>
+                        )}
+                        {checkoutError && (
+                          <p className="mt-2 text-sm text-red-600">{checkoutError}</p>
                         )}
                       </div>
 

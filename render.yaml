@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: startup-it
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        value: https://lksfsksaff.onrender.com
