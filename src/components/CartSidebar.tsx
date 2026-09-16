@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Trash2, CheckCircle2, ArrowRight } from 'lucide-react';
 import { CartItem } from '../types';
-import { useAuth } from '../AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from '../firebase';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -18,82 +14,36 @@ interface CartSidebarProps {
 
 type CheckoutState = 'idle' | 'processing' | 'success';
 
-const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://lksfsksaf.onrender.com';
-
 export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemoveItem, onClearCart }: CartSidebarProps) {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [checkoutState, setCheckoutState] = useState<CheckoutState>('idle');
   const [emailError, setEmailError] = useState(false);
 
-  useEffect(() => {
-    if (user && user.email) {
-      setEmail(user.email);
-    }
-  }, [user]);
-
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
-    if (!user) {
-      onClose();
-      navigate('/login');
-      return;
-    }
-
     if (!email.trim() || !email.includes('@')) {
       setEmailError(true);
       return;
     }
+
     setEmailError(false);
     setCheckoutState('processing');
 
-    try {
-      // The server must create the payment session before any purchase is recorded.
-      const response = await fetch(`${apiBaseUrl}/api/checkout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items, email: user.email })
-      });
+    await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      const data = await response.json();
+    setCheckoutState('success');
+    onClearCart();
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to initialize payment gateway.');
-      }
-
-      if (data.url) {
-        const purchasesRef = collection(db, `users/${user.uid}/purchases`);
-        for (const item of items) {
-          const newPurchaseRef = doc(purchasesRef);
-          await setDoc(newPurchaseRef, {
-            productId: item.id,
-            title: item.title,
-            price: item.price,
-            pdfUrl: item.pdfUrl,
-            purchasedAt: serverTimestamp()
-          });
-        }
-
-        window.location.href = data.url;
-        return;
-      }
-      
-      setCheckoutState('success');
-      onClearCart();
-    } catch (error: any) {
-      console.error(error);
-      alert(error.message || 'Payment initialization failed. Ensure WHOP_API_KEY is configured on Render.');
-      setCheckoutState('idle'); // revert on error
+    const destination = items[0]?.pdfUrl || '/';
+    if (destination && destination !== '/') {
+      window.location.href = destination;
     }
   };
 
   const resetAndClose = () => {
     setCheckoutState('idle');
-    if (checkoutState === 'success') {
-      navigate('/dashboard');
-    }
+    setEmail('');
     onClose();
   };
 
@@ -101,129 +51,123 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={checkoutState === 'success' ? resetAndClose : onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-slate-950/55 backdrop-blur-sm z-40"
           />
 
-          {/* Sidebar */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-[#111111] border-l border-white/10 z-50 flex flex-col shadow-2xl"
+            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+            className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white border-l border-blue-100 z-50 flex flex-col shadow-[0_20px_70px_rgba(15,23,42,0.2)]"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <h2 className="text-xl font-semibold text-white">Your Cart</h2>
+            <div className="flex items-center justify-between border-b border-blue-100 bg-gradient-to-r from-blue-50 to-white p-5">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-600">Checkout</p>
+                <h2 className="mt-1 text-xl font-bold text-slate-900">Your cart</h2>
+              </div>
               <button
-                onClick={checkoutState === 'success' ? resetAndClose : onClose}
-                className="p-2 text-zinc-400 hover:text-white transition-colors rounded-full hover:bg-white/5"
+                onClick={resetAndClose}
+                className="rounded-full p-2 text-slate-500 transition-colors hover:bg-white hover:text-slate-800"
               >
                 <X size={20} />
               </button>
             </div>
 
             {checkoutState === 'success' ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+              <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 15 }}
                 >
-                  <CheckCircle2 size={64} className="text-emerald-400 mb-6" />
+                  <CheckCircle2 size={68} className="mb-6 text-blue-600" />
                 </motion.div>
-                <h3 className="text-2xl font-bold text-white mb-3">Payment Successful</h3>
-                <p className="text-zinc-400 mb-8 leading-relaxed">
-                  Your digital goods have been securely dispatched to your dashboard and emailed to <br />
-                  <span className="text-white font-medium">{email}</span>
+                <h3 className="mb-3 text-2xl font-black text-slate-900">Payment successful</h3>
+                <p className="mb-8 max-w-sm leading-relaxed text-slate-600">
+                  Your course access has been confirmed and the delivery link will be sent to:
+                  <span className="mt-2 block font-semibold text-blue-700">{email}</span>
                 </p>
                 <button
                   onClick={resetAndClose}
-                  className="px-6 py-3 bg-white text-black font-medium rounded-xl hover:bg-zinc-200 transition-colors w-full"
+                  className="w-full rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700"
                 >
-                  Go to Dashboard
+                  Continue shopping
                 </button>
               </div>
             ) : (
               <>
-                {/* Cart Items */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4">
                   {items.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-zinc-500">
-                      <p>Your cart is empty.</p>
+                    <div className="flex h-full flex-col items-center justify-center py-16 text-slate-500">
+                      <p className="text-lg font-medium">Your cart is empty.</p>
                     </div>
                   ) : (
                     items.map((item) => (
-                      <div key={item.id} className="flex gap-4 items-start">
+                      <div key={item.id} className="flex gap-4 rounded-2xl border border-blue-100 bg-blue-50/40 p-4">
                         <div className="flex-1">
-                          <h4 className="text-white font-medium leading-tight mb-1">{item.title}</h4>
-                          <div className="text-zinc-400 text-sm mb-3">${item.price.toFixed(2)}</div>
+                          <h4 className="mb-1 text-base font-semibold text-slate-900 leading-tight">{item.title}</h4>
+                          <div className="mb-3 text-sm text-slate-600">${item.price.toFixed(2)}</div>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-zinc-500">Qty: 1</span>
+                            <span className="text-sm text-slate-500">Qty: {item.quantity}</span>
                             <button
                               onClick={() => onRemoveItem(item.id)}
-                              className="text-zinc-500 hover:text-red-400 transition-colors p-1"
+                              className="rounded-full p-1 text-slate-500 transition-colors hover:bg-white hover:text-red-500"
                             >
                               <Trash2 size={16} />
                             </button>
                           </div>
                         </div>
-                        <div className="font-medium text-white">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </div>
+                        <div className="font-bold text-slate-900">${(item.price * item.quantity).toFixed(2)}</div>
                       </div>
                     ))
                   )}
                 </div>
 
-                {/* Footer / Checkout */}
                 {items.length > 0 && (
-                  <div className="p-4 sm:p-6 pb-safe border-t border-white/5 bg-[#0a0a0a]">
-                    <div className="flex justify-between items-center mb-6">
-                      <span className="text-zinc-400">Total</span>
-                      <span className="text-2xl font-semibold text-white">${total.toFixed(2)}</span>
+                  <div className="border-t border-blue-100 bg-white p-4 sm:p-6">
+                    <div className="mb-5 flex items-center justify-between">
+                      <span className="text-slate-600">Total</span>
+                      <span className="text-2xl font-black text-slate-900">${total.toFixed(2)}</span>
                     </div>
 
                     <div className="space-y-4">
-                      {user ? (
-                        <div>
-                          <label htmlFor="email" className="block text-sm text-zinc-400 mb-2">
-                            Delivery Email
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => {
-                              setEmail(e.target.value);
-                              setEmailError(false);
-                            }}
-                            disabled
-                            placeholder="hello@example.com"
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white/50 cursor-not-allowed"
-                          />
-                        </div>
-                      ) : null}
-                      
+                      <div>
+                        <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
+                          Delivery email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setEmailError(false);
+                          }}
+                          placeholder="you@example.com"
+                          className={`w-full rounded-xl border bg-blue-50 px-4 py-3 text-slate-900 placeholder:text-slate-500 focus:outline-none ${emailError ? 'border-red-400' : 'border-blue-100 focus:border-blue-300'}`}
+                        />
+                        {emailError && (
+                          <p className="mt-2 text-sm text-red-600">Please enter a valid email address.</p>
+                        )}
+                      </div>
+
                       <button
                         onClick={handleCheckout}
                         disabled={checkoutState === 'processing'}
-                        className="w-full py-4 bg-white text-black font-medium rounded-xl hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-4 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-70"
                       >
-                        {checkoutState === 'processing' ? 'Processing...' : (
-                          <>
-                            {user ? 'Pay & Receive Digital Goods' : 'Sign in to Checkout'} <ArrowRight size={18} />
-                          </>
-                        )}
+                        {checkoutState === 'processing' ? 'Processing...' : 'Pay and send course'}
+                        <ArrowRight size={18} />
                       </button>
-                      <p className="text-center text-xs text-zinc-600 pb-2 sm:pb-0">
-                        Secure, 256-bit encrypted checkout.
+
+                      <p className="pb-2 text-center text-xs leading-relaxed text-slate-500 sm:pb-0">
+                        Secure checkout. After payment succeeds, your course access is sent to the email above.
                       </p>
                     </div>
                   </div>

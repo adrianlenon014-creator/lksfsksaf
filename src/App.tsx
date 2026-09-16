@@ -4,11 +4,8 @@ import { Product, CartItem } from './types';
 import { CartSidebar } from './components/CartSidebar';
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
-import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
 import { Privacy } from './pages/Privacy';
 import { Terms } from './pages/Terms';
-import { Code2 } from 'lucide-react';
 
 export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -44,7 +41,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col font-sans">
+      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
         <Navbar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -54,26 +51,24 @@ export default function App() {
 
         <Routes>
           <Route path="/" element={<Home searchQuery={searchQuery} onAddToCart={handleAddToCart} />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
         </Routes>
 
-        <footer className="border-t border-white/5 py-12 px-6 mt-auto">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="flex items-center gap-3 text-zinc-400">
-              <img src="/images.jpg" alt="StartUP IT Logo" className="w-8 h-8 object-contain rounded-lg bg-white" />
-              <span className="font-semibold text-white">StartUP IT</span>
+        <footer className="border-t border-blue-100 bg-white mt-auto">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 px-4 sm:px-6 py-10">
+            <div className="flex items-center gap-3 text-blue-700">
+              <img src="/images.jpg" alt="StartUP IT Logo" className="w-9 h-9 object-contain rounded-xl bg-white ring-1 ring-blue-100 shadow-sm" />
+              <span className="font-semibold text-slate-900 text-lg">StartUP IT</span>
             </div>
-            <p className="text-sm text-zinc-500">
-              &copy; {new Date().getFullYear()} StartUP IT. Premium digital goods for developers.
+            <p className="text-sm text-slate-600">
+              &copy; {new Date().getFullYear()} StartUP IT. Premium digital learning for builders.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-zinc-500">
-              <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
-              <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <a href="mailto:support@rstech.com" className="hover:text-white transition-colors flex items-center gap-2">
-                Support: <span className="text-zinc-300">support@rstech.com</span>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-600">
+              <Link to="/terms" className="hover:text-blue-700 transition-colors">Terms</Link>
+              <Link to="/privacy" className="hover:text-blue-700 transition-colors">Privacy</Link>
+              <a href="mailto:support@startupit.com" className="hover:text-blue-700 transition-colors flex items-center gap-2">
+                Support: <span className="text-slate-800">support@startupit.com</span>
               </a>
             </div>
           </div>

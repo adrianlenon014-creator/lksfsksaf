@@ -12,45 +12,39 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
   const Icon = IconMap[product.icon] || IconMap['Code'];
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="flex flex-col h-full p-6 bg-[#111111] border border-white/5 rounded-2xl hover:border-white/10 transition-colors group relative overflow-hidden"
+      transition={{ duration: 0.45 }}
+      className="group flex h-full flex-col rounded-[28px] border border-blue-100 bg-white p-6 shadow-[0_18px_45px_rgba(37,99,235,0.08)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_55px_rgba(37,99,235,0.14)]"
     >
-      {/* Subtle hover gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-      <div className="relative z-10 flex flex-col h-full">
-        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform duration-500">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 text-blue-700 ring-1 ring-blue-100 shadow-sm">
           <Icon size={24} strokeWidth={1.5} />
         </div>
+        <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-blue-600">{product.category}</span>
+      </div>
 
-        <div className="flex-1">
-          <div className="text-xs font-medium tracking-wider uppercase text-zinc-500 mb-2">
-            {product.category}
+      <div className="flex-1">
+        <h3 className="mb-3 text-xl font-bold tracking-tight text-slate-900 leading-tight">{product.title}</h3>
+        <p className="mb-6 text-sm leading-relaxed text-slate-600">{product.description}</p>
+      </div>
+
+      <div className="mt-auto border-t border-blue-100 pt-5">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">Price</p>
+            <span className="text-2xl font-black text-slate-900">${product.price.toFixed(0)}</span>
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
-            {product.title}
-          </h3>
-          <p className="text-sm text-zinc-400 leading-relaxed mb-6">
-            {product.description}
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-white/5 mt-auto">
-          <span className="text-2xl sm:text-xl font-medium text-white">
-            ${product.price.toFixed(2)}
-          </span>
           <button
             onClick={() => onAddToCart(product)}
-            className="w-full sm:w-auto px-4 py-3 sm:py-2 text-sm font-medium text-black bg-white rounded-xl sm:rounded-lg hover:bg-zinc-200 transition-colors active:scale-95 text-center"
+            className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
           >
             Add to cart
           </button>
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
