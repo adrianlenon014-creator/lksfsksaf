@@ -4,8 +4,9 @@ services:
     runtime: node
     buildCommand: npm ci && npm run build
     startCommand: npm start
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
       - key: VITE_API_URL
-        value: https://lksfsksafff.onrender.com
+        value: https://lksfsksaffff.onrender.com
