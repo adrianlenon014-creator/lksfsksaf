@@ -9,7 +9,7 @@ dotenv.config();
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-  const whopApiKey = process.env.WHOPS_API_KEY;
+  const whopApiKey = process.env.WHOP_API_KEY || process.env.WHOPS_API_KEY;
 
   app.use(express.json());
   app.use(cors());
@@ -20,7 +20,7 @@ async function startServer() {
       const { items, email } = req.body;
       if (!whopApiKey) {
         return res.status(400).json({ 
-          error: "Payment processing is not configured. Please add WHOPS_API_KEY to the server environment." 
+          error: "Payment processing is not configured. Add WHOP_API_KEY to the Render environment and redeploy." 
         });
       }
 

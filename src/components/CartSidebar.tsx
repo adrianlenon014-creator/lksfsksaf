@@ -83,7 +83,7 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
       onClearCart();
     } catch (error: any) {
       console.error(error);
-      alert(error.message || 'Payment initialization failed. Ensure you have added the WHOPS_API_KEY in the settings.');
+      alert(error.message || 'Payment initialization failed. Ensure WHOP_API_KEY is configured on Render.');
       setCheckoutState('idle'); // revert on error
     }
   };
