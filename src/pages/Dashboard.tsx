@@ -5,13 +5,19 @@ import { collection, query, getDocs } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { motion } from 'motion/react';
 import { BookOpen, Download, User as UserIcon, Code2 } from 'lucide-react';
+import { products } from '../data';
 
 interface Purchase {
   id: string;
   productId: string;
   title: string;
   price: number;
+  pdfUrl?: string;
   purchasedAt: any;
+}
+
+function getPdfUrl(purchase: Purchase) {
+  return purchase.pdfUrl || products.find((product) => product.id === purchase.productId)?.pdfUrl;
 }
 
 export function Dashboard() {
@@ -117,12 +123,18 @@ export function Dashboard() {
                     </p>
                   </div>
                   <div className="flex gap-3">
-                    <button className="flex-1 py-2.5 bg-white text-black font-medium text-sm rounded-xl hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2">
-                      <BookOpen size={16} /> Read
-                    </button>
-                    <button className="flex-1 py-2.5 bg-white/5 text-white font-medium text-sm rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-2 border border-white/5">
-                      <Download size={16} /> Download
-                    </button>
+                    {getPdfUrl(purchase) ? (
+                      <>
+                        <a href={getPdfUrl(purchase)} target="_blank" rel="noreferrer" className="flex-1 py-2.5 bg-white text-black font-medium text-sm rounded-xl hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2">
+                          <BookOpen size={16} /> Read
+                        </a>
+                        <a href={getPdfUrl(purchase)} download className="flex-1 py-2.5 bg-white/5 text-white font-medium text-sm rounded-xl hover:bg-white/10 transition-colors flex items-center justify-center gap-2 border border-white/5">
+                          <Download size={16} /> Download
+                        </a>
+                      </>
+                    ) : (
+                      <p className="text-sm text-zinc-500">Course PDF is being prepared.</p>
+                    )}
                   </div>
                 </motion.div>
               ))}

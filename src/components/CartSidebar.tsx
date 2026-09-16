@@ -71,6 +71,7 @@ export function CartSidebar({ isOpen, onClose, items, onUpdateQuantity, onRemove
             productId: item.id,
             title: item.title,
             price: item.price,
+            pdfUrl: item.pdfUrl,
             purchasedAt: serverTimestamp()
           });
         }

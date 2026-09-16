@@ -35,6 +35,19 @@ Never commit `.env` or any real payment credentials. `.env.example` is safe to c
 
 The npm lockfile is committed and should be installed with `npm ci` in CI environments such as Netlify.
 
+## Course PDFs
+
+Place the purchased files in `public/courses/` using the product IDs from `src/data.ts`:
+
+```text
+public/courses/1.pdf
+public/courses/2.pdf
+...
+public/courses/15.pdf
+```
+
+Vite copies these files to the deployed site. The dashboard shows **Read** and **Download** links after a purchase. Do not place private, unrelated documents in this public folder.
+
 Checkout requires an account-scoped Whop API key with the `checkout_configuration:create` permission. The `WHOP_ACCOUNT_ID` must be the `biz_...` account that owns that key; an app key, revoked key, or key from a different account returns an authorization error.
 
 ## Production

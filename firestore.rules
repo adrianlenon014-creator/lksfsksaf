@@ -36,10 +36,11 @@ service cloud.firestore {
 
     // Purchases Subcollection
     function isValidPurchase(data) {
-      return data.keys().hasAll(['productId', 'title', 'price', 'purchasedAt'])
+      return data.keys().hasAll(['productId', 'title', 'price', 'pdfUrl', 'purchasedAt'])
         && data.productId is string && data.productId.size() <= 128
         && data.title is string && data.title.size() <= 255
         && data.price is number
+        && data.pdfUrl is string && data.pdfUrl.size() <= 512
         && data.purchasedAt is timestamp;
     }
 
